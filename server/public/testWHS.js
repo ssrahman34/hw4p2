@@ -1,4 +1,5 @@
 // Global; will be replaced by a call to the server! 
+var photos=[];
 var photoURLArray = 
 [
  { url: "http://lotus.idav.ucdavis.edu/public/ecs162/UNESCO/A%20Torre%20Manuelina.jpg"},
@@ -75,10 +76,19 @@ function sendRequest() {
 	// Print all photo names requested
 	console.log("End of Part 4: Printing all fileNames of photos requested...");
 	var len = Object.keys(recordsObj).length;
+	var URL="http://lotus.idav.ucdavis.edu/public/ecs162/UNESCO/"
+	//This will be the object that has each photos fileName, width and height
 	for (i = 0; i < len; i++) {
+	    var photoRow = new Object();
 	    var iStr = i.toString();
-	    var photoName = recordsObj[iStr]["fileName"];
+	    photoRow.src = encodeURI(URL+recordsObj[iStr]["fileName"]);
+	    photoRow.width = recordsObj[iStr]["width"];
+	    photoRow.height = recordsObj[iStr]["height"];
+	    photos.push(photoRow);	    
 	    console.log(i + ": " + photoName); 
+	}
+	for (var i = 0; i < photos.length; i++){
+		console.log(photos[i]);
 	}
 
     }

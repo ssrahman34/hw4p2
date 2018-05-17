@@ -215,7 +215,7 @@ function sendFiles (request, response) {
 var finder = http.createServer(sendFiles);
 
 // fill in YOUR port number!
-finder.listen("55899");
+finder.listen("53974");
 
 /* This function fills up the global variable imgList[] with the JSON file of photo names */
 function fillUpImageList() {
