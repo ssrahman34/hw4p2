@@ -51,8 +51,10 @@ imgListLoaded = false;
 // like a callback
 function sendFiles (request, response) {
     var url = request.url;
-    
-    if (url.split("/")[1].search("testWHS") == -1 && url.search("query") == -1) {
+    //if (url.search("html") 
+    //if (url.split("/")[1].search("testWHS") == -1 && url.search("query") == -1) 
+      if (url.search("html") !=-1 && url.split("/")[1].search("testWHS") == -1)
+	{
 	response.writeHead(404, {"Content-Type": "text/html"});
 	response.write("<!DOCTYPE html><html><body><h1>404 Error</h1><p>Page not found.</p></body></html>");
 	response.end();
