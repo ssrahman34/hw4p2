@@ -11,6 +11,8 @@ var photoURLArray =
 
 console.log("In testWHS.js...");
 
+
+
 // Function to send AJAX request to server
 function sendRequest() {
     console.log("Entered sendRequest...");
@@ -28,30 +30,59 @@ function sendRequest() {
 	console.log("Opened oReq...");
 	
 	// load --> when data is returned
-	oReq.addEventListener("load", handleResponse);
+	oReq.addEventListener("load", handleResponse2);
+	// oReq.addEventListener("load", handleResponseMultiple);
 	console.log("Added handleResponse listener...");
 	oReq.send();
 	console.log("Sent oReq...");
     }
-    
-    // // Callback function to display name of photo corresponding to number requested by browser
-    function handleResponse() {
-	console.log("Entered handleResponse!");
-	console.log("Entering handleResponse. This is the value of responseText: " + oReq.responseText);
 
-	if (oReq.status >= 400) {
-	    console.log("The requested input is not valid! Please try again.");
-	}
+    // Callback function to display photo (db version)
+    function handleResponse2() {
+	console.log("Entered handleResponse2: " + oReq.responseText);
+
+	var obj = JSON.parse(oReq.responseText);
 
 	var startOfURL = "http://lotus.idav.ucdavis.edu/public/ecs162/UNESCO/";
-	var photoName = oReq.responseText;
-	var photoURL =  startOfURL + photoName;
+	var photoName = obj.fileName;
+	var photoURL =  encodeURI(startOfURL + photoName);
 
+	console.log("Filename: " + photoName);
 	console.log("Final url: " + photoURL);
 	var display = document.getElementById("photoImg");
-	display.src = photoURL;
+	display.src = photoURL;	
     }
+    
+    // Callback function to display name of photo corresponding to number requested by browser
+    // function handleResponse() {
+    // 	console.log("Entered handleResponse!");
+    // 	console.log("Entering handleResponse. This is the value of responseText: " + oReq.responseText);
+
+    // 	if (oReq.status >= 400) {
+    // 	    console.log("The requested input is not valid! Please try again.");
+    // 	}
+
+    // 	var startOfURL = "http://lotus.idav.ucdavis.edu/public/ecs162/UNESCO/";
+    // 	var photoName = oReq.responseText;
+    // 	var photoURL =  startOfURL + photoName;
+
+    // 	console.log("Final url: " + photoURL);
+    // 	var display = document.getElementById("photoImg");
+    // 	display.src = photoURL;
+    // }
 }
+
+
+
+// function sendRequest2() {
+//     // Parse numList by comma
+
+//     // For each num,
+//     // check if w/in bounds
+//     // based on # have server retrieve fileName, width, height from db
+//     // push each to dictList
+// }
+
 
 // Called when the user pushes the "submit" button 
 function photoByNumber() {

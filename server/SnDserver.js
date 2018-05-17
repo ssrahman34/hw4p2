@@ -41,6 +41,9 @@ var http  = require("http");
 var staticServer = require("node-static");
 var fileServer = new staticServer.Server("./public");
 
+const sqlite3 = require('sqlite3').verbose();
+let db = new sqlite3.Database('./PhotoQ.db');
+
 /* Initialize global array that will contain all photo names*/
 imgList = [];
 imgListLoaded = false;
@@ -70,15 +73,50 @@ function sendFiles (request, response) {
 	    response.write("Invalid input");
 	    response.end();
 	}
-	
-	else {
-	    console.log("Returning: " + imgList[Number(num)]);
-	    console.log(imgListLoaded);
-	    response.writeHead(200, {"Content-Type": "text/plain"});
-	    response.write(imgList[Number(num)]);
-	    response.end();
 
+	/* Responding to single-number queries */
+	// else {
+	//     console.log("Returning: " + imgList[Number(num)]);
+	//     console.log(imgListLoaded);
+	//     response.writeHead(200, {"Content-Type": "text/plain"});
+	//     response.write(imgList[Number(num)]);
+	//     response.end();
+	// }
+
+	/* Responding to a list of number queries */
+	else {
+	    var cmd = "SELECT fileName, width, height FROM photoTags WHERE idNum=" + Number(num);
+	    db.get(cmd, dbCallback);
+
+	    // Callback function to return error or get from db if no error
+	    function dbCallback(err, row) {
+
+		if (err) {
+		    console.log("errCallback: returning error: ", err);
+		}
+
+		else {
+		    console.log("db get successful. printing row...");
+		    console.log(row);
+
+		    var responseObj = new Object();
+		    responseObj.fileName = row['fileName'];
+		    responseObj.width = row['width'];
+		    responseObj.height = row['height'];
+
+		    var jsonString = JSON.stringify(responseObj);
+		    
+		    response.writeHead(200, {"Content-Type": "application/json"});
+		    response.write(jsonString);
+		    response.end();
+		}
+		//response.writeHead(200, {"Content-Type": "text/plain"});
+		//response.write(data);
+		//response.end();
+	    }
+	    
 	}
+	
     }
     
     else {
@@ -117,7 +155,7 @@ function sendFiles (request, response) {
 var finder = http.createServer(sendFiles);
 
 // fill in YOUR port number!
-finder.listen("53974");
+finder.listen("55899");
 
 /* This function fills up the global variable imgList[] with the JSON file of photo names */
 function fillUpImageList() {
