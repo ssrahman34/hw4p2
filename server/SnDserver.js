@@ -65,15 +65,45 @@ function sendFiles (request, response) {
 	// Parse query
 	var query_arr = url.split("=");
 	var num = query_arr[1];
-	console.log("Browser requested " + num);
 
-	if (Number(num) > 990 || Number(num) < 1 || isNaN(Number(num))) {
-	    console.log("Invalid input!");
-	    response.writeHead(404, {"Content-Type": "text/plain"});
-	    response.write("Invalid input");
-	    response.end();
+	// Get all queries separated by plus sign
+	var nums = query_arr[1];
+	console.log("Browser requested nums: " + nums);
+	
+	// Split queries into separate numbers on plus sign
+	// nums.replace(new RegExp("\\+","g"),' ')
+	var num_list = nums.split(/[+]/gm);
+
+	// Test split num_list
+	console.log("Contents of split num_list:");
+	for (i = 0; i < num_list.length; i++) {
+	    console.log(num_list[i]);
 	}
 
+	// Remove all invalid queries from num_list
+	console.log("Removing all invalid queries");
+	for (i = 0; i < num_list.length; i++) {
+	    var num = num_list[i];
+	    if (Number(num) > 990 || Number(num) < 1 || isNaN(Number(num))) {
+		// console.log("Invalid input!");
+		// response.writeHead(404, {"Content-Type": "text/plain"});
+		// response.write("Invalid input");
+		// response.end();
+		console.log("Removing " + num_list[i]);
+		num_list.splice(i, 1); // Remove invalid element from num_list
+	    }    
+	}
+
+	console.log("After splicing: " + num_list + " length: " + num_list.length);
+
+	// If all queries have been found to be invalid
+	if (num_list.length == 0) {
+	    console.log("All inputs invalid!");
+	    response.writeHead(404, {"Content-Type": "text/plain"});
+	    response.write("Response: All inputs invalid!");
+	    response.end();
+	}
+	
 	/* Responding to single-number queries */
 	// else {
 	//     console.log("Returning: " + imgList[Number(num)]);
@@ -85,26 +115,56 @@ function sendFiles (request, response) {
 
 	/* Responding to a list of number queries */
 	else {
-	    var cmd = "SELECT fileName, width, height FROM photoTags WHERE idNum=" + Number(num);
-	    db.get(cmd, dbCallback);
+
+	    // Build query list
+	    var ids = "(";
+
+	    console.log("Adding query numbers to sql cmd list");
+	    for (j = 0; j < num_list.length; j++) {
+		console.log(num_list[j]);
+		if (j == num_list.length - 1)
+		    ids = ids + num_list[j];
+		else
+		    ids = ids + num_list[j] + ",";
+	    }
+
+	    ids = ids + ")";
+	    
+	    //var cmd = "SELECT fileName, width, height FROM photoTags WHERE idNum=" + Number(num);
+	    var cmd = "SELECT fileName, width, height FROM photoTags WHERE idNum IN " + ids;
+	    console.log("multiple query cmd: " + cmd);
+	    db.all(cmd, dbCallback);
 
 	    // Callback function to return error or get from db if no error
-	    function dbCallback(err, row) {
+	    function dbCallback(err, rows) {
 
 		if (err) {
 		    console.log("errCallback: returning error: ", err);
 		}
 
 		else {
-		    console.log("db get successful. printing row...");
-		    console.log(row);
 
-		    var responseObj = new Object();
-		    responseObj.fileName = row['fileName'];
-		    responseObj.width = row['width'];
-		    responseObj.height = row['height'];
+		    console.log("Returning user's requested photos...");
 
-		    var jsonString = JSON.stringify(responseObj);
+		    // Create object to contain all requested records
+		    var requestedRecords = new Object();
+		    
+		    for (k = 0; k < rows.length; k++) {
+			console.log(rows[k]);
+			var index = k.toString();
+			requestedRecords[index] = rows[k];
+		    }
+
+		    // var row = rows[0];
+		    // console.log("db get successful. printing row...");
+		    // console.log(row);
+
+		    // var responseObj = new Object();
+		    // responseObj.fileName = row['fileName'];
+		    // responseObj.width = row['width'];
+		    // responseObj.height = row['height'];
+
+		    var jsonString = JSON.stringify(requestedRecords);
 		    
 		    response.writeHead(200, {"Content-Type": "application/json"});
 		    response.write(jsonString);

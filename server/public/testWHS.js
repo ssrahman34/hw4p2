@@ -17,6 +17,10 @@ console.log("In testWHS.js...");
 function sendRequest() {
     console.log("Entered sendRequest...");
     var num = document.getElementById("num").value;
+    var input = document.getElementById("num").value;
+    var numList = input.split(",");
+    var num = numList[0];
+    
     console.log("Requested " + num);
 
     if (Number(num) > 990 || Number(num) < 1 || isNaN(Number(num))) {
@@ -25,7 +29,19 @@ function sendRequest() {
 
     else {
 	var oReq = new XMLHttpRequest();
-	var url = "query?num=" + num;
+	//var url = "query?num=" + num;
+
+	// Build url
+	console.log("Building URL!");
+
+	var url = "query?num=";
+	for (i = 0; i < numList.length; i++) {
+	    if (i == numList.length - 1)
+		url = url + numList[i];
+	    
+	    else url = url + numList[i] + "+";
+	}
+	
 	oReq.open("GET", url);
 	console.log("Opened oReq...");
 	
@@ -41,16 +57,30 @@ function sendRequest() {
     function handleResponse2() {
 	console.log("Entered handleResponse2: " + oReq.responseText);
 
-	var obj = JSON.parse(oReq.responseText);
-
+	var requestedRecords = oReq.responseText;
+	var recordsObj = JSON.parse(requestedRecords); 
+	var zeroIndex = "0";
+	
 	var startOfURL = "http://lotus.idav.ucdavis.edu/public/ecs162/UNESCO/";
-	var photoName = obj.fileName;
+	var photoName = recordsObj["0"]["fileName"];
+	console.log("Photoname: " + photoName);
+	
 	var photoURL =  encodeURI(startOfURL + photoName);
 
 	console.log("Filename: " + photoName);
 	console.log("Final url: " + photoURL);
 	var display = document.getElementById("photoImg");
 	display.src = photoURL;	
+
+	// Print all photo names requested
+	console.log("End of Part 4: Printing all fileNames of photos requested...");
+	var len = Object.keys(recordsObj).length;
+	for (i = 0; i < len; i++) {
+	    var iStr = i.toString();
+	    var photoName = recordsObj[iStr]["fileName"];
+	    console.log(i + ": " + photoName); 
+	}
+
     }
     
     // Callback function to display name of photo corresponding to number requested by browser
