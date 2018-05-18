@@ -1,3 +1,5 @@
+const React = require('react');
+const ReactDOM = require('react-dom');
 /* "Hello world" server code */
 
 // like include
@@ -240,5 +242,4 @@ function fillUpImageList() {
 	}
     }
 }
-
 

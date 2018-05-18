@@ -4,20 +4,19 @@
    get the real image data using an AJAX query. */
 // Global; will be replaced by a call to the server! 
 photos=[];
-var photoURLArray = 
+/*var photos = 
 [
- { url: "http://lotus.idav.ucdavis.edu/public/ecs162/UNESCO/A%20Torre%20Manuelina.jpg"},
- { url: "http://lotus.idav.ucdavis.edu/public/ecs162/UNESCO/Uluru%20sunset1141.jpg" },
- { url: "http://lotus.idav.ucdavis.edu/public/ecs162/UNESCO/Sejong tomb 1.jpg"},
- { url: "http://lotus.idav.ucdavis.edu/public/ecs162/UNESCO/Serra%20da%20Capivara%20-%20Painting%207.JPG"},
- { url: "http://lotus.idav.ucdavis.edu/public/ecs162/UNESCO/Royal%20Palace%2c%20Rabat.jpg"},
- { url: "http://lotus.idav.ucdavis.edu/public/ecs162/UNESCO/Red%20pencil%20urchin%20-%20Papahnaumokukea.jpg"}
- ];
-
+{src: "http://lotus.idav.ucdavis.edu/public/ecs162/UNESCO/A%20Torre%20Manuelina.jpg", width: 574, height: 381 },
+{src: "http://lotus.idav.ucdavis.edu/public/ecs162/UNESCO/Uluru%20sunset1141.jpg", width: 500 , height: 334 },
+{src: "http://lotus.idav.ucdavis.edu/public/ecs162/UNESCO/Sejong tomb 1.jpg", width: 574, height: 430},
+{src: "http://lotus.idav.ucdavis.edu/public/ecs162/UNESCO/Serra%20da%20Capivara%20-%20Painting%207.JPG", width: 574, height: 430},
+{src: "http://lotus.idav.ucdavis.edu/public/ecs162/UNESCO/Royal%20Palace%2c%20Rabat.jpg", width: 574, height: 410},
+{src: "http://lotus.idav.ucdavis.edu/public/ecs162/UNESCO/Red%20pencil%20urchin%20-%20Papahnaumokukea.jpg", width: 574 , height: 382 }
+];*/  
 console.log("In testWHS.js...");
 
 
-
+window.dispatchEvent(new Event('resize'));
 // Function to send AJAX request to server
 function sendRequest() {
     console.log("Entered sendRequest...");
@@ -91,11 +90,11 @@ function sendRequest() {
 	    photos.push(photoRow);	    
 	    console.log(i + ": " + photoName); 
 	}
+	callReact();
 	function callReact(){
 		const reactContainer = document.getElementById("react");
-
-		ReactDOM.render(React.createElement(App),reactContainer);
-
+		var reactApp = ReactDOM.render(React.createElement(App),reactContainer);
+		window.dispatchEvent(new Event('resize'));
 	}//where we reder React DOM
 	for (var i = 0; i < photos.length; i++){
 		console.log(photos[i]);
@@ -148,8 +147,6 @@ function photoByNumber() {
 }
 
 
-
-// A react component for a tag
 class Tag extends React.Component {
 
     render () {
@@ -219,7 +216,6 @@ class ImageTile extends React.Component {
 } // class
 
 
-
 // The react component for the whole image gallery
 // Most of the code for this is in the included library
 class App extends React.Component {
@@ -239,12 +235,37 @@ class App extends React.Component {
 
   render() {
     return (
-       React.createElement( Gallery, {photos: photos,
-                   onClick: this.selectTile,
-                   ImageComponent: ImageTile} )
-            );
+       React.createElement( Gallery, {photos: this.state.photos,
+       onClick: this.selectTile, 
+       ImageComponent: ImageTile} )
+      );
   }
-
 }
 
 /* Finally, we actually run some code */
+
+
+		/* Workaround for bug in gallery where it isn't properly arranged at init */
+		window.dispatchEvent(new Event('resize'));
+function updateImages()
+{
+  var reqIndices = document.getElementById("req-text").value;
+
+  if (!reqIndices) return; // No query? Do nothing!
+
+  var xhr = new XMLHttpRequest();
+  xhr.open("GET", "/query?numList=" + reqIndices.replace(/ |,/g, "+")); // We want more input sanitization than this!
+  xhr.addEventListener("load", (evt) => {
+    if (xhr.status == 200) {
+        reactApp.setState({photos:JSON.parse(xhr.responseText)});
+        window.dispatchEvent(new Event('resize')); /* The world is held together with duct tape */
+    } else {
+        console.log("XHR Error!", xhr.responseText);
+    }
+  } );
+  xhr.send();
+}
+window.dispatchEvent(new Event('resize'));
+console.log("THEEEEE new version...");
+const reactContainer = document.getElementById("react");
+var reactApp = ReactDOM.render(React.createElement(App),reactContainer);
