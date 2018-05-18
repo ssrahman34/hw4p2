@@ -7,28 +7,23 @@
 <link rel="stylesheet" type="text/css" href="http://web.cs.ucdavis.edu/~amenta/s18/reset.css">
 <link rel="stylesheet" type="text/css" href="testWHS.css">
 <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet"> 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 
 <body>
 
-<header>
-<h1>Testing PhotoQ</h1>
-</header>
-
 
 <main>
-<div id="query">
-<P>
-Load a photo by number:
-</p>
-
-<input id="num" placeholder="photo number"> 
-<button onclick="sendRequest()">TEST Submit</button>
+<div style="flex-direction: row;">
+	<div id = "p">PHOTOQ</div>
+	<div style = "width: 50%;float: right;" id="query">
+		<input id="num" placeholder="photo number"> 
+		<button onclick="sendRequest()">&#x1F50D</button>
 <!-- <button onclick="photoByNumber()">Submit</button>  -->
+	</div>
 </div>
 
-
-<h2>PhotoQ</h2>
 <div id="react"></div>
  </main>
 
