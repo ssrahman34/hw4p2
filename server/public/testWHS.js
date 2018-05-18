@@ -73,8 +73,8 @@ function sendRequest() {
 
 	console.log("Filename: " + photoName);
 	console.log("Final url: " + photoURL);
-	var display = document.getElementById("photoImg");
-	display.src = photoURL;	
+//	var display = document.getElementById("photoImg");
+//	display.src = photoURL;	
 
 	// Print all photo names requested
 	console.log("End of Part 4: Printing all fileNames of photos requested...");
@@ -134,7 +134,7 @@ function sendRequest() {
 
 
 // Called when the user pushes the "submit" button 
-function photoByNumber() {
+/*function photoByNumber() {
     //sendRequest();
     var num = document.getElementById("num").value;
     num = num.trim();
@@ -145,7 +145,7 @@ function photoByNumber() {
 	display.src = photoURL;
     }
 }
-
+*/
 
 class Tag extends React.Component {
 
