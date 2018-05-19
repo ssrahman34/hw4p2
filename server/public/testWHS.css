@@ -1,19 +1,21 @@
 #p {
-   font-family: sans-serif;
+   font-family: Open Sans;
    font-size: xx-large;
-   text-align: left;
+font-style: italic;
+  /* text-align: left;*/
    margin: 10px;
    color: #2E3C9C;
 /*float:left;*/
   width: 40%;
+  padding: 10px;
 font-weight: 800;
 }
 body {
 	min-height: 100vh;  /* need this line to 
 					tell body to fill viewport */
 	font-family: 'Montserrat', sans-serif;
-	background-color: white;
-	display: flex;
+	/*background-color: white;*/
+/*	display: flex;*/
 /*	flex-direction: column;*/
 	color: blue;
 	margin: 15px; 
@@ -25,7 +27,10 @@ header {
 	  
 }
 
+#hide{
+color:gray;
 
+}
 
 
 main {
