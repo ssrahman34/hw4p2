@@ -13,7 +13,7 @@ function readJson(){
 
     function loadImageList () {
 
-	var data = fs.readFileSync('6whs.json');
+	var data = fs.readFileSync('photoList.json');
 
 	if (! data) {
 	    console.log("cannot read the .json");
